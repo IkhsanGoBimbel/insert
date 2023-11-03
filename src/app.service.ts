@@ -19,7 +19,7 @@ export class AppService {
   async readExcelFile() {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..', 'noreg3.xlsx');
+      const filePath = path.join(__dirname, '..', 'Data T_Siswa_5_Nov.xlsx');
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -444,7 +444,7 @@ export class AppService {
   async bacaExcel_bcrypt() {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..', 'T_Siswa_Pak_Andy_Fix.xlsx');
+      const filePath = path.join(__dirname, '..', 'Data T_Siswa_5_Nov.xlsx');
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -502,7 +502,7 @@ export class AppService {
   async bacaExcel_cari_t_siswa() {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..', 'JUMAT_T_SISWA.xlsx');
+      const filePath = path.join(__dirname, '..', 'Data T_Siswa_5_Nov.xlsx');
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -558,7 +558,7 @@ export class AppService {
   async bacaExcel_insert_t_produk_siswa() {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..', 'T_Produk_Siswa_Pak_Andy_Fix.xlsx');
+      const filePath = path.join(__dirname, '..', 'Data T_Produk_Siswa_5_Nov.xlsx');
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -625,7 +625,7 @@ export class AppService {
       const filePath = path.join(
         __dirname,
         '..',
-        'T_Produk_Siswa_Pak_Andy_Fix.xlsx',
+        'Data T_Produk_Siswa_5_Nov.xlsx',
       );
 
       if (!fs.existsSync(filePath)) {
@@ -653,21 +653,35 @@ export class AppService {
         }
       });
 
+      // const produk_mix = [
+      //   {
+      //     c_id_produk_mix: 13119,
+      //     c_id_produk: [
+      //       32796, 33233, 33423, 40792, 40793, 33619, 33630, 33695, 33708,
+      //       40794, 40795, 40796, 40797, 40798, 40799, 40800, 40801, 40802,
+      //       33295, 33296, 33164, 40803, 40804, 33520, 40805, 40806, 40807,
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13112,
+      //     c_id_produk: [
+      //       32796, 33238, 33449, 40808, 40809, 33619, 33655, 33695, 33708,
+      //       40810, 40811, 40812, 40813, 40814, 40815, 40816, 40817, 40818,
+      //       33346, 33347, 33190, 40819, 40820, 33559, 40821, 40822, 40823,
+      //     ],
+      //   },
+      // ];
       const produk_mix = [
         {
-          c_id_produk_mix: 13111,
+          c_id_produk_mix: 13119,
           c_id_produk: [
-            32796, 33233, 33423, 40792, 40793, 33619, 33630, 33695, 33708,
-            40794, 40795, 40796, 40797, 40798, 40799, 40800, 40801, 40802,
-            33295, 33296, 33164, 40803, 40804, 33520, 40805, 40806, 40807,
+           40803
           ],
         },
         {
-          c_id_produk_mix: 13112,
+          c_id_produk_mix: 13120,
           c_id_produk: [
-            32796, 33238, 33449, 40808, 40809, 33619, 33655, 33695, 33708,
-            40810, 40811, 40812, 40813, 40814, 40815, 40816, 40817, 40818,
-            33346, 33347, 33190, 40819, 40820, 33559, 40821, 40822, 40823,
+           40819
           ],
         },
       ];
@@ -708,7 +722,7 @@ export class AppService {
         });
       });
 
-      const filePathBaru = 't_produk-aktif-pak-andy_fix.xlsx';
+      const filePathBaru = 't_produk-aktif-5-Nov.xlsx';
       await workbookBaru.xlsx.writeFile(filePathBaru);
 
       return filePathBaru;
@@ -723,7 +737,7 @@ export class AppService {
       const filePath = path.join(
         __dirname,
         '..',
-        't_produk-aktif-pak-andy_fix.xlsx',
+        't_produk-aktif-5-Nov.xlsx',
       );
 
       if (!fs.existsSync(filePath)) {
@@ -752,7 +766,7 @@ export class AppService {
       });
 
       const datanya = data.map((item, index) => {
-        const c_idnya = 5993237
+        const c_idnya = 5993347
         return {
           c_no_register: +item.c_no_register,
           c_id_produk : +item.c_id_produk,
