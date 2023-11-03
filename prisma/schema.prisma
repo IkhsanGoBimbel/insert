@@ -1,0 +1,198 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model t_bookmark {
+  c_no_register BigInt  @id @default(0)
+  c_bookmark    Json?   @db.Json
+  t_siswa       t_siswa @relation(fields: [c_no_register], references: [c_no_register], onDelete: Cascade)
+}
+
+model t_bookmark_copy {
+  c_no_register BigInt @id @default(0)
+  c_bookmark    Json?  @db.Json
+}
+
+model t_mapel_pilihan_siswa {
+  c_id                Int     @id @default(autoincrement())
+  c_no_register       BigInt
+  c_id_kelompok_ujian Json    @db.Json
+  t_siswa             t_siswa @relation(fields: [c_no_register], references: [c_no_register], onDelete: Cascade)
+
+  @@index([c_no_register])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model t_orangtua {
+  c_id                   Int       @id @default(autoincrement())
+  c_no_register          BigInt
+  c_email                String?   @db.VarChar(225)
+  c_nomor_hp             String?   @db.VarChar(255)
+  c_id_device            String?   @db.VarChar(50)
+  c_is_login             String?   @db.VarChar(255)
+  c_is_aktif             String?   @db.VarChar(255)
+  c_created_at           DateTime  @default(now()) @db.Timestamp(6)
+  c_password             String
+  c_last_update_password DateTime? @default(now()) @db.Timestamp(6)
+  is_last_login          DateTime? @default(now()) @db.Timestamptz(6)
+  t_siswa                t_siswa   @relation(fields: [c_no_register], references: [c_no_register], onDelete: Cascade)
+
+  @@index([c_no_register])
+}
+
+model t_pilihan_ptn_siswa {
+  c_id          Int     @id @default(autoincrement())
+  c_no_register BigInt  @unique(map: "t_pilihan_ptn_siswa_c_no_register_idx")
+  c_pilihan     Json?   @db.Json
+  t_siswa       t_siswa @relation(fields: [c_no_register], references: [c_no_register], onDelete: Cascade)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model t_produk_aktif {
+  c_id            Int       @id @default(autoincrement())
+  c_no_register   BigInt
+  c_id_produk     Int       @default(0)
+  c_status        String    @default("Aktif") @db.VarChar(255)
+  c_tanggal_awal  DateTime? @db.Date
+  c_tanggal_akhir DateTime? @db.Date
+  t_siswa         t_siswa   @relation(fields: [c_no_register], references: [c_no_register], onDelete: Cascade)
+
+  @@index([c_id_produk])
+  @@index([c_no_register])
+}
+
+model t_produk_siswa {
+  c_id_pembelian          Int
+  c_id                    Int       @id @default(autoincrement())
+  c_no_register           BigInt
+  c_tanggal_daftar        DateTime? @db.Date
+  c_id_kelas              Int?
+  c_tahun_ajaran          String?   @db.VarChar(10)
+  c_id_dikdasken          Int?
+  c_nama_lengkap          String?   @db.VarChar(80)
+  c_id_gedung             Int?
+  c_id_komar              Int?
+  c_id_kota               Int?
+  c_id_sekolah            Int?
+  c_id_sekolah_kelas      Int?
+  c_tingkat_sekolah_kelas String?   @db.VarChar(20)
+  c_id_jenis_kelas        Int?
+  c_kapasitas_max         Int?
+  c_status_bayar          String?   @db.VarChar(15)
+  c_id_bundling           Int?
+  c_kerjasama             String?   @db.Char(1)
+  c_last_update           DateTime? @default(now()) @db.Timestamp(6)
+  t_siswa                 t_siswa   @relation(fields: [c_no_register], references: [c_no_register], onDelete: Cascade)
+
+  @@index([c_id_gedung])
+  @@index([c_id_sekolah_kelas])
+  @@index([c_no_register])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model t_siswa {
+  c_no_register          BigInt                  @id
+  c_nama_lengkap         String?                 @db.VarChar(100)
+  c_email                String?                 @db.VarChar(225)
+  c_nomor_hp             String?                 @db.VarChar(255)
+  c_id_device            String?                 @db.VarChar(50)
+  c_is_login             String?                 @db.VarChar(255)
+  c_is_aktif             String?                 @db.VarChar(255)
+  c_created_at           DateTime                @default(now()) @db.Timestamp(6)
+  c_password             String
+  c_last_update_password DateTime?               @default(now()) @db.Timestamp(6)
+  is_last_login          DateTime?               @default(now()) @db.Timestamptz(6)
+  t_bookmark             t_bookmark?
+  t_mapel_pilihan_siswa  t_mapel_pilihan_siswa[]
+  t_orangtua             t_orangtua[]
+  t_pilihan_ptn_siswa    t_pilihan_ptn_siswa?
+  t_produk_aktif         t_produk_aktif[]
+  t_produk_siswa         t_produk_siswa[]
+  t_siswa_detail         t_siswa_detail[]     
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model t_siswa_detail {
+  c_id                 Int       @id
+  c_no_register        BigInt
+  c_nama_lengkap       String    @db.VarChar(80)
+  c_nama_panggilan     String?   @db.VarChar(50)
+  c_jenis_kelamin      String?   @db.VarChar(255)
+  c_gol_darah          String?   @db.VarChar(5)
+  c_id_district        Int?
+  c_tgl_lahir          DateTime? @db.Date
+  c_agama              String?   @db.VarChar(30)
+  c_nama_ibu_kandung   String?   @db.VarChar(55)
+  c_pekerjaan_ortu     String?   @db.VarChar(250)
+  c_id_lurah           Int?
+  c_alamat             String?
+  c_no_tlp             String?   @db.Char(15)
+  c_no_tlp2            String?   @db.Char(15)
+  c_hp                 String?   @db.Char(15)
+  c_hp2                String?   @db.Char(15)
+  c_email              String?   @db.VarChar(50)
+  c_email2             String?   @db.VarChar(50)
+  c_status_kepemilikan String?   @db.VarChar(30)
+  c_hubungan           String?   @db.VarChar(100)
+  c_is_aktif           String    @default("Aktif") @db.VarChar(255)
+  c_updater            String?   @db.VarChar(20)
+  c_insert             DateTime? @default(now()) @db.Timestamp(6)
+  c_last_update        DateTime? @default(now()) @db.Timestamp(6)
+  c_id_gedung          Int
+  c_nisn               String?   @db.VarChar(14)
+  t_siswa              t_siswa   @relation(fields: [c_no_register], references: [c_no_register], onDelete: Cascade)
+
+  @@index([c_no_register])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model t_orangtua_new {
+  c_id                   Int       @id(map: "t_orangtua_pkey_1") @default(autoincrement())
+  c_email                String?   @db.VarChar(225)
+  c_nomor_hp             String?   @db.VarChar(255)
+  c_id_device            String?   @db.VarChar(50)
+  c_is_login             String?   @db.VarChar(255)
+  c_is_aktif             String?   @db.VarChar(255)
+  c_created_at           DateTime  @default(now()) @db.Timestamp(6)
+  c_password             String
+  c_last_update_password DateTime? @default(now()) @db.Timestamp(6)
+  is_last_login          DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model t_orangtua_siswa {
+// }
+
+/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model t_produk_aktif_temp {
+// }
+
+/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model t_produk_siswa_temp {
+// }
+
+/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model t_siswa_detail_temp {
+// }
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model t_siswa_new {
+  c_no_register          BigInt    @id(map: "t_siswa_pkey_1")
+  c_nama_lengkap         String?   @db.VarChar(100)
+  c_email                String?   @db.VarChar(225)
+  c_nomor_hp             String?   @db.VarChar(255)
+  c_id_device            String?   @db.VarChar(50)
+  c_is_login             String?   @db.VarChar(255)
+  c_is_aktif             String?   @db.VarChar(255)
+  c_created_at           DateTime  @default(now()) @db.Timestamp(6)
+  c_password             String
+  c_last_update_password DateTime? @default(now()) @db.Timestamp(6)
+  is_last_login          DateTime? @default(now()) @db.Timestamptz(6)
+}
