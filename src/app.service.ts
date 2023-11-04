@@ -444,7 +444,7 @@ export class AppService {
   async bacaExcel_bcrypt() {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..', 'Data T_Siswa_5_Nov.xlsx');
+      const filePath = path.join(__dirname, '..', 'Data T_Siswa_7pagi_2.xlsx');
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -502,7 +502,7 @@ export class AppService {
   async bacaExcel_cari_t_siswa() {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..', 'Data T_Siswa_5_Nov.xlsx');
+      const filePath = path.join(__dirname, '..', 'Data T_Siswa_7pagi_2.xlsx');
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -558,7 +558,7 @@ export class AppService {
   async bacaExcel_insert_t_produk_siswa() {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..', 'Data T_Produk_Siswa_5_Nov.xlsx');
+      const filePath = path.join(__dirname, '..', 'data t_produk_siswa_Dummy.xlsx');
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -625,7 +625,7 @@ export class AppService {
       const filePath = path.join(
         __dirname,
         '..',
-        'Data T_Produk_Siswa_5_Nov.xlsx',
+        'Data T_produk_siswa_7pagi_1.xlsx',
       );
 
       if (!fs.existsSync(filePath)) {
@@ -671,17 +671,61 @@ export class AppService {
       //     ],
       //   },
       // ];
+      // const produk_mix = [
+      //   {
+      //     c_id_produk_mix: 13119,
+      //     c_id_produk: [
+      //      40803
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13120,
+      //     c_id_produk: [
+      //      40819
+      //     ],
+      //   },
+      // ];
       const produk_mix = [
         {
-          c_id_produk_mix: 13119,
+          c_id_produk_mix: 13163,
           c_id_produk: [
-           40803
+            40870
           ],
         },
         {
-          c_id_produk_mix: 13120,
+          c_id_produk_mix: 13164,
           c_id_produk: [
-           40819
+            40871
+          ],
+        },
+        {
+          c_id_produk_mix: 13165,
+          c_id_produk: [
+            40872
+          ],
+        },
+        {
+          c_id_produk_mix: 13166,
+          c_id_produk: [
+            40873
+          ],
+        },
+        {
+          c_id_produk_mix: 13182,
+          c_id_produk: [
+           40866
+          ],
+        },
+        {
+          c_id_produk_mix: 13183,
+          c_id_produk: [
+           40867
+          ],
+        },
+        {
+          c_id_produk_mix: 13184,
+          c_id_produk: [
+           40868
           ],
         },
       ];
@@ -722,7 +766,7 @@ export class AppService {
         });
       });
 
-      const filePathBaru = 't_produk-aktif-5-Nov.xlsx';
+      const filePathBaru = 't_produk-aktif-7pagi_1Fix.xlsx';
       await workbookBaru.xlsx.writeFile(filePathBaru);
 
       return filePathBaru;
@@ -737,7 +781,7 @@ export class AppService {
       const filePath = path.join(
         __dirname,
         '..',
-        't_produk-aktif-5-Nov.xlsx',
+        't_produk-aktif-7pagi_1Fix.xlsx',
       );
 
       if (!fs.existsSync(filePath)) {
@@ -766,7 +810,7 @@ export class AppService {
       });
 
       const datanya = data.map((item, index) => {
-        const c_idnya = 5993347
+        const c_idnya = 6002670
         return {
           c_no_register: +item.c_no_register,
           c_id_produk : +item.c_id_produk,
@@ -790,4 +834,46 @@ export class AppService {
       throw new Error('Error reading Excel file');
     }
   }
+
+  async uploadbacaExcel(file:any) {
+    const workbook = new ExcelJS.Workbook();
+    try {
+      const filePath = path.join(__dirname, '..','excel', file.filename);
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error('File not found');
+      }
+      await workbook.xlsx.readFile(filePath);
+      const worksheet = workbook.getWorksheet(1); // Assuming you want to read the first worksheet.
+
+      const data = [];
+
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) {
+          // Header row, you can process the headers here.
+        } else {
+          // Data rows
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            // Map column headers to keys
+            const columnHeader: any = worksheet
+              .getRow(1)
+              .getCell(colNumber).value;
+            rowData[columnHeader] = cell.value;
+          });
+          data.push(rowData);
+        }
+      });
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath); // Menghapus file jika ada
+        console.log('File berhasil dihapus.');
+      } else {
+        console.log('File tidak ditemukan, tidak ada yang dihapus.');
+      }
+      return data;
+    } catch (error) {
+      throw new Error('Error reading Excel file');
+    }
+  }
+
 }

@@ -1,5 +1,8 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { AppService } from './app.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { Express } from 'express';
 
 @Controller()
 export class AppController {
@@ -74,4 +77,49 @@ export class AppController {
   }
 
 
+  @Post('excel/t_siswa/read')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcelt_siswa(@UploadedFile() file){
+    return this.appService.uploadbacaExcel(file)
+  }
+
+  @Post('excel/t_produk_siswa/read')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcelt_produk_siswa(@UploadedFile() file){
+    return this.appService.uploadbacaExcel(file)
+  }
+
+  @Post('excel/t_produk_aktif/read')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcelt_produk_aktif(@UploadedFile() file){
+    return this.appService.uploadbacaExcel(file)
+  }
+
+
 }
+
+export function FileInterceptorWithDest(destination: string) {
+  return FileInterceptor('excel', {
+    storage: diskStorage({
+      destination: destination,
+      filename: (req, file, cb) => {
+        const table = req.originalUrl.split('/')
+        const date = new Date()
+        const tanggal = date.getDate()
+        const bulan = date.getMonth()
+        const tahun = date.getFullYear()
+        const jam = date.getHours()
+        const menit = date.getMinutes()
+        const uniqueSuffix = file.originalname;
+        return cb(null, file.fieldname + '-' + table[2]+'-'+ tanggal + '-' + bulan + '-' + tahun + '-' + jam + '-' + menit + '-' + uniqueSuffix);
+      },
+    }),
+    fileFilter: (req, file, cb) => {
+      if (!file.originalname.match(/\.(xlsx)$/)) {
+        return cb(new HttpException('Invalid file type', 403), false);
+      }
+      cb(null, true);
+    },
+  });
+}
+
