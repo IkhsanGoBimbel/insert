@@ -95,6 +95,47 @@ export class AppController {
     return this.appService.uploadbacaExcel(file)
   }
 
+  @Post('excel/t_siswa/find')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcel_find_t_siswa(@UploadedFile() file){
+    return this.appService.uploadbcryptExcelCariT_Siswa(file)
+  }
+
+  @Post('excel/t_siswa/insert')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcel_insert_t_siswa(@UploadedFile() file){
+    return this.appService.uploadbcryptExcel(file)
+  }
+
+  @Post('excel/t_produk_siswa/readtable')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcel_read_table(@UploadedFile() file){
+    return this.appService.uploadT_produkSiswaRead(file)
+  }
+
+  @Post('excel/t_produk_siswa/insert')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcel_insert_table(@UploadedFile() file){
+    return this.appService.uploadT_produkSiswaInsert(file)
+  }
+
+  @Post('excel/t_produk_siswa/build_produk_aktif')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcel_build_produk_aktif(@UploadedFile() file){
+    return this.appService.uploadT_produkSiswaBuildProdukAktif(file)
+  }
+
+  @Post('excel/t_produk_aktif/readtable')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcel_read_table_produk_aktif(@UploadedFile() file){
+    return this.appService.bacaExcel_table_t_produk_aktif(file)
+  }
+
+  @Post('excel/t_produk_aktif/insert')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcel_insert_t_produk_aktif(@UploadedFile() file){
+    return this.appService.bacaExcel_insert_t_produk_aktifnya(file)
+  }
 
 }
 

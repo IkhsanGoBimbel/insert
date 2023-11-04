@@ -3,6 +3,7 @@
 /node_modules
 *.xlsx
 /excel
+*.env
 
 # Logs
 logs

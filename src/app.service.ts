@@ -876,4 +876,662 @@ export class AppService {
     }
   }
 
+  async uploadbcryptExcelCariT_Siswa(file:any) {
+    const workbook = new ExcelJS.Workbook();
+    try {
+      const filePath = path.join(__dirname, '..','excel', file.filename);
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error('File not found');
+      }
+      await workbook.xlsx.readFile(filePath);
+      const worksheet = workbook.getWorksheet(1); // Assuming you want to read the first worksheet.
+
+      const data = [];
+
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) {
+          // Header row, you can process the headers here.
+        } else {
+          // Data rows
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            // Map column headers to keys
+            const columnHeader: any = worksheet
+              .getRow(1)
+              .getCell(colNumber).value;
+            rowData[columnHeader] = cell.value;
+          });
+          data.push(rowData);
+        }
+      });
+
+      const noreg = data.map((item) => item.c_no_register);
+
+      const findSiswa = await this.prisma.t_siswa.findMany({
+        where : {
+          c_no_register : {
+            in : noreg
+          }
+        }
+      })
+
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath); // Menghapus file jika ada
+        console.log('File berhasil dihapus.');
+      } else {
+        console.log('File tidak ditemukan, tidak ada yang dihapus.');
+      }
+      const siswaNoreg = findSiswa.map((item) => {
+        return {
+          c_no_register: item.c_no_register.toString().padStart(12, '0'),
+          c_email: item.c_email,
+          c_nomor_hp: item.c_nomor_hp,
+          c_nama_lengkap: item.c_nama_lengkap,
+        };
+      });
+
+      return siswaNoreg;
+    } catch (error) {
+      console.log(error)
+      return error
+    }
+  }
+
+  async uploadbcryptExcel(file:any) {
+    const workbook = new ExcelJS.Workbook();
+    try {
+      const filePath = path.join(__dirname, '..','excel', file.filename);
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error('File not found');
+      }
+      await workbook.xlsx.readFile(filePath);
+      const worksheet = workbook.getWorksheet(1); // Assuming you want to read the first worksheet.
+
+      const data = [];
+
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) {
+          // Header row, you can process the headers here.
+        } else {
+          // Data rows
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            // Map column headers to keys
+            const columnHeader: any = worksheet
+              .getRow(1)
+              .getCell(colNumber).value;
+            rowData[columnHeader] = cell.value;
+          });
+          data.push(rowData);
+        }
+      });
+
+      const saltRounds = 10;
+      const hashedData = await Promise.all(
+        data.map(async (item) => {
+          const hashedPassword = await bcrypt.hash(item.c_password, saltRounds);
+
+          return {
+            c_no_register: +item.c_no_register,
+            c_nama_lengkap: item.c_nama_lengkap,
+            c_email: item.c_email,
+            c_nomor_hp: item.c_nomor_hp,
+            c_is_aktif: 'aktif',
+            c_password: hashedPassword,
+          };
+        }),
+      );
+      
+      const insertData = await this.prisma.t_siswa.createMany({
+        data: hashedData,
+      });
+
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath); // Menghapus file jika ada
+        console.log('File berhasil dihapus.');
+      } else {
+        console.log('File tidak ditemukan, tidak ada yang dihapus.');
+      }
+      return insertData;
+    } catch (error) {
+      throw new Error('Error reading Excel file');
+    }
+  }
+
+
+  async uploadT_produkSiswaRead(file:any) {
+    const workbook = new ExcelJS.Workbook();
+    try {
+      const filePath = path.join(__dirname, '..','excel', file.filename);
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error('File not found');
+      }
+      await workbook.xlsx.readFile(filePath);
+      const worksheet = workbook.getWorksheet(1); // Assuming you want to read the first worksheet.
+
+      const data = [];
+
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) {
+          // Header row, you can process the headers here.
+        } else {
+          // Data rows
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            // Map column headers to keys
+            const columnHeader: any = worksheet
+              .getRow(1)
+              .getCell(colNumber).value;
+            rowData[columnHeader] = cell.value;
+          });
+          data.push(rowData);
+        }
+      });
+
+      const datanya = data.map((item) => {
+        return {
+          c_id_pembelian: +item.c_id_pembelian,
+          c_no_register: +item.c_no_register,
+          c_tanggal_daftar: item.c_tanggal_daftar,
+          c_id_kelas: +item.c_id_kelas,
+          c_tahun_ajaran: item.c_tahun_ajaran,
+          c_id_dikdasken: +item.c_id_dikdasken,
+          c_nama_lengkap: item.c_nama_lengkap,
+          c_id_gedung: +item.c_id_gedung,
+          c_id_komar: +item.c_id_komar,
+          c_id_kota: +item.c_id_kota,
+          c_id_sekolah: +item.c_id_sekolah,
+          c_id_sekolah_kelas: +item.c_id_sekolah_kelas,
+          c_tingkat_sekolah_kelas: item.c_tingkat_sekolah_kelas,
+          c_id_jenis_kelas: +item.c_id_jenis_kelas,
+          c_kapasitas_max: +item.c_kapasitas_max,
+          c_status_bayar: item.c_status_bayar,
+          c_id_bundling: +item.c_id_bundling,
+          c_kerjasama: item.c_kerjasama,
+        };
+      });
+
+
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath); // Menghapus file jika ada
+        console.log('File berhasil dihapus.');
+      } else {
+        console.log('File tidak ditemukan, tidak ada yang dihapus.');
+      }
+      return datanya;
+    } catch (error) {
+      console.log(error)
+      throw new Error('Error reading Excel file');
+    }
+  }
+
+  async uploadT_produkSiswaInsert(file:any) {
+    const workbook = new ExcelJS.Workbook();
+    try {
+      const filePath = path.join(__dirname, '..','excel', file.filename);
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error('File not found');
+      }
+      await workbook.xlsx.readFile(filePath);
+      const worksheet = workbook.getWorksheet(1); // Assuming you want to read the first worksheet.
+
+      const data = [];
+
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) {
+          // Header row, you can process the headers here.
+        } else {
+          // Data rows
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            // Map column headers to keys
+            const columnHeader: any = worksheet
+              .getRow(1)
+              .getCell(colNumber).value;
+            rowData[columnHeader] = cell.value;
+          });
+          data.push(rowData);
+        }
+      });
+
+      const datanya = data.map((item) => {
+        return {
+          c_id_pembelian: +item.c_id_pembelian,
+          c_no_register: +item.c_no_register,
+          c_tanggal_daftar: item.c_tanggal_daftar,
+          c_id_kelas: +item.c_id_kelas,
+          c_tahun_ajaran: item.c_tahun_ajaran,
+          c_id_dikdasken: +item.c_id_dikdasken,
+          c_nama_lengkap: item.c_nama_lengkap,
+          c_id_gedung: +item.c_id_gedung,
+          c_id_komar: +item.c_id_komar,
+          c_id_kota: +item.c_id_kota,
+          c_id_sekolah: +item.c_id_sekolah,
+          c_id_sekolah_kelas: +item.c_id_sekolah_kelas,
+          c_tingkat_sekolah_kelas: item.c_tingkat_sekolah_kelas,
+          c_id_jenis_kelas: +item.c_id_jenis_kelas,
+          c_kapasitas_max: +item.c_kapasitas_max,
+          c_status_bayar: item.c_status_bayar,
+          c_id_bundling: +item.c_id_bundling,
+          c_kerjasama: item.c_kerjasama,
+        };
+      });
+
+      const insertData = await this.prisma.t_produk_siswa.createMany({
+        data: datanya,
+      });
+      
+
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath); // Menghapus file jika ada
+        console.log('File berhasil dihapus.');
+      } else {
+        console.log('File tidak ditemukan, tidak ada yang dihapus.');
+      }
+      return insertData;
+    } catch (error) {
+      console.log(error)
+      throw new Error('Error reading Excel file');
+    }
+  }
+
+  async uploadT_produkSiswaBuildProdukAktif(file:any) {
+    const workbook = new ExcelJS.Workbook();
+    try {
+      const filePath = path.join(__dirname, '..','excel', file.filename);
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error('File not found');
+      }
+      await workbook.xlsx.readFile(filePath);
+      const worksheet = workbook.getWorksheet(1); // Assuming you want to read the first worksheet.
+
+      const data = [];
+
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) {
+          // Header row, you can process the headers here.
+        } else {
+          // Data rows
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            // Map column headers to keys
+            const columnHeader: any = worksheet
+              .getRow(1)
+              .getCell(colNumber).value;
+            rowData[columnHeader] = cell.value;
+          });
+          data.push(rowData);
+        }
+      });
+
+      const produk_mix = [
+        {
+          c_id_produk_mix: 13073,
+          c_id_produk: [
+            40708
+          ],
+        },
+        {
+          c_id_produk_mix: 13074,
+          c_id_produk: [
+            40709
+          ],
+        },
+        {
+          c_id_produk_mix: 13077,
+          c_id_produk: [
+            40710
+          ],
+        },
+        {
+          c_id_produk_mix: 13125,
+          c_id_produk: [
+            40832
+          ],
+        },
+        {
+          c_id_produk_mix: 13126,
+          c_id_produk: [
+            40833
+          ],
+        },
+        {
+          c_id_produk_mix: 13127,
+          c_id_produk: [
+            40834
+          ],
+        },
+        {
+          c_id_produk_mix: 13128,
+          c_id_produk: [
+            40835
+          ],
+        },
+        {
+          c_id_produk_mix: 13129,
+          c_id_produk: [
+            40836
+          ],
+        },
+        {
+          c_id_produk_mix: 13130,
+          c_id_produk: [
+            40837
+          ],
+        },
+        {
+          c_id_produk_mix: 13131,
+          c_id_produk: [
+            40838
+          ],
+        },
+        {
+          c_id_produk_mix: 13141,
+          c_id_produk: [
+            40848
+          ],
+        },
+        {
+          c_id_produk_mix: 13142,
+          c_id_produk: [
+            40849
+          ],
+        },
+        {
+          c_id_produk_mix: 13143,
+          c_id_produk: [
+            40850
+          ],
+        },
+        {
+          c_id_produk_mix: 13152,
+          c_id_produk: [
+            40859
+          ],
+        },
+        {
+          c_id_produk_mix: 13153,
+          c_id_produk: [
+            40860
+          ],
+        },
+        {
+          c_id_produk_mix: 13154,
+          c_id_produk: [
+            40861
+          ],
+        },
+        {
+          c_id_produk_mix: 13155,
+          c_id_produk: [
+            40862
+          ],
+        },
+        {
+          c_id_produk_mix: 13160,
+          c_id_produk: [
+            40867
+          ],
+        },
+        {
+          c_id_produk_mix: 13161,
+          c_id_produk: [
+            40868
+          ],
+        },
+        {
+          c_id_produk_mix: 13162,
+          c_id_produk: [
+            40869
+          ],
+        },
+        {
+          c_id_produk_mix: 13196,
+          c_id_produk: [
+            40897
+          ],
+        },
+        {
+          c_id_produk_mix: 13197,
+          c_id_produk: [
+            40898
+          ],
+        },
+        {
+          c_id_produk_mix: 13198,
+          c_id_produk: [
+            40899
+          ],
+        },
+        {
+          c_id_produk_mix: 13216,
+          c_id_produk: [
+            40917
+          ],
+        },
+        {
+          c_id_produk_mix: 13217,
+          c_id_produk: [
+            40918
+          ],
+        },
+        {
+          c_id_produk_mix: 13218,
+          c_id_produk: [
+            40919
+          ],
+        },
+        {
+          c_id_produk_mix: 14263,
+          c_id_produk: [
+            41963
+          ],
+        },
+        {
+          c_id_produk_mix: 14264,
+          c_id_produk: [
+            41964
+          ],
+        },
+        {
+          c_id_produk_mix: 14265,
+          c_id_produk: [
+            41965
+          ],
+        },
+        {
+          c_id_produk_mix: 14266,
+          c_id_produk: [
+            41966
+          ],
+        },
+        {
+          c_id_produk_mix: 15282,
+          c_id_produk: [
+            42471
+          ],
+        },
+        {
+          c_id_produk_mix: 15283,
+          c_id_produk: [
+            42472
+          ],
+        },
+        {
+          c_id_produk_mix: 15284,
+          c_id_produk: [
+            42473
+          ],
+        },
+      ];
+
+      const result = data.flatMap((pembelian) => {
+        const produkMixData = produk_mix.find(
+          (mix) => mix.c_id_produk_mix === pembelian.id_produk_mix,
+        );
+        return produkMixData
+          ? produkMixData.c_id_produk.map((id_produk) => ({
+              c_no_register: pembelian.c_no_register,
+              c_id_produk: id_produk,
+            }))
+          : [];
+      });
+
+      const workbookBaru = new ExcelJS.Workbook();
+      const worksheetBaru = workbookBaru.addWorksheet('Data_coba');
+
+      // Menentukan header kolom
+      worksheetBaru.columns = [
+        { header: 'c_no_register', key: 'c_no_register' },
+        { header: 'c_id_produk', key: 'c_id_produk' },
+        { header: 'c_status', key: 'c_status' },
+        { header: 'c_tanggal_awal', key: 'c_tanggal_awal' },
+        { header: 'c_tanggal_akhir', key: 'c_tanggal_akhir' },
+      ];
+
+      // console.log(worksheet_baru)
+
+      result.forEach((items) => {
+        worksheetBaru.addRow({
+          c_no_register: items.c_no_register,
+          c_id_produk: items.c_id_produk,
+          c_status: 'Aktif',
+          c_tanggal_awal: '2023-10-27',
+          c_tanggal_akhir: '2024-10-27',
+        });
+      });
+
+      const filePathBaru = `t_produk_aktif_${file.filename}.xlsx`;
+      await workbookBaru.xlsx.writeFile(filePathBaru);
+
+      
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath); // Menghapus file jika ada
+        console.log('File berhasil dihapus.');
+      } else {
+        console.log('File tidak ditemukan, tidak ada yang dihapus.');
+      }
+      return filePathBaru;
+    } catch (error) {
+      console.log(error)
+      throw new Error('Error reading Excel file');
+    }
+  }
+
+
+  async bacaExcel_table_t_produk_aktif(file:any) {
+    const workbook = new ExcelJS.Workbook();
+    try {
+      const filePath = path.join(__dirname, '..','excel', file.filename);
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error('File not found');
+      }
+      await workbook.xlsx.readFile(filePath);
+      const worksheet = workbook.getWorksheet(1); // Assuming you want to read the first worksheet.
+
+      const data = [];
+
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) {
+          // Header row, you can process the headers here.
+        } else {
+          // Data rows
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            // Map column headers to keys
+            const columnHeader: any = worksheet
+              .getRow(1)
+              .getCell(colNumber).value;
+            rowData[columnHeader] = cell.value;
+          });
+          data.push(rowData);
+        }
+      });
+
+      const c_id = await this.prisma.$queryRaw`SELECT MAX(c_id) from t_produk_aktif`
+
+      const datanya = data.map((item, index) => {
+        const c_idnya = c_id[0].max
+        return {
+          c_no_register: +item.c_no_register,
+          c_id_produk : +item.c_id_produk,
+          c_status : item.c_status,
+          c_tanggal_awal : new Date(item.c_tanggal_awal),
+          c_tanggal_akhir : new Date(item.c_tanggal_akhir),
+          c_id : c_idnya + (index+1)
+        };
+      });
+
+
+      return datanya
+    }
+    catch (error){
+      console.log(error)
+      throw new Error('Error reading Excel file');
+    }
+  }
+
+  async bacaExcel_insert_t_produk_aktifnya(file:any) {
+    const workbook = new ExcelJS.Workbook();
+    try {
+      const filePath = path.join(__dirname, '..','excel', file.filename);
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error('File not found');
+      }
+      await workbook.xlsx.readFile(filePath);
+      const worksheet = workbook.getWorksheet(1); // Assuming you want to read the first worksheet.
+
+      const data = [];
+
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) {
+          // Header row, you can process the headers here.
+        } else {
+          // Data rows
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            // Map column headers to keys
+            const columnHeader: any = worksheet
+              .getRow(1)
+              .getCell(colNumber).value;
+            rowData[columnHeader] = cell.value;
+          });
+          data.push(rowData);
+        }
+      });
+
+      const c_id = await this.prisma.$queryRaw`SELECT MAX(c_id) from t_produk_aktif`
+
+      const datanya = data.map((item, index) => {
+        const c_idnya = c_id[0].max
+        return {
+          c_no_register: +item.c_no_register,
+          c_id_produk : +item.c_id_produk,
+          c_status : item.c_status,
+          c_tanggal_awal : new Date(item.c_tanggal_awal),
+          c_tanggal_akhir : new Date(item.c_tanggal_akhir),
+          c_id : c_idnya + (index+1)
+        };
+      });
+
+      const insertData = await this.prisma.t_produk_aktif.createMany({
+        data: datanya,
+        skipDuplicates: true
+      });
+
+      return insertData
+    }
+    catch (error){
+      console.log(error)
+      throw new Error('Error reading Excel file');
+    }
+  }
+
 }
