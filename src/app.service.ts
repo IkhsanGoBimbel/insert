@@ -1139,6 +1139,90 @@ export class AppService {
     }
   }
 
+  async uploadT_produkSiswa_delete(file:any) {
+    const workbook = new ExcelJS.Workbook();
+    try {
+      const filePath = path.join(__dirname, '..','excel', file.filename);
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error('File not found');
+      }
+      await workbook.xlsx.readFile(filePath);
+      const worksheet = workbook.getWorksheet(1); // Assuming you want to read the first worksheet.
+
+      const data = [];
+
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) {
+          // Header row, you can process the headers here.
+        } else {
+          // Data rows
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            // Map column headers to keys
+            const columnHeader: any = worksheet
+              .getRow(1)
+              .getCell(colNumber).value;
+            rowData[columnHeader] = cell.value;
+          });
+          data.push(rowData);
+        }
+      });
+
+      const datanya = data.map((item) => {
+        return {
+          c_id_pembelian: +item.c_id_pembelian,
+          c_no_register: +item.c_no_register,
+          c_tanggal_daftar: item.c_tanggal_daftar,
+          c_id_kelas: +item.c_id_kelas,
+          c_tahun_ajaran: item.c_tahun_ajaran,
+          c_id_dikdasken: +item.c_id_dikdasken,
+          c_nama_lengkap: item.c_nama_lengkap,
+          c_id_gedung: +item.c_id_gedung,
+          c_id_komar: +item.c_id_komar,
+          c_id_kota: +item.c_id_kota,
+          c_id_sekolah: +item.c_id_sekolah,
+          c_id_sekolah_kelas: +item.c_id_sekolah_kelas,
+          c_tingkat_sekolah_kelas: item.c_tingkat_sekolah_kelas,
+          c_id_jenis_kelas: +item.c_id_jenis_kelas,
+          c_kapasitas_max: +item.c_kapasitas_max,
+          c_status_bayar: item.c_status_bayar,
+          c_id_bundling: +item.c_id_bundling,
+          c_kerjasama: item.c_kerjasama,
+        };
+      });
+
+      const datanoreg = datanya.map((item) => item.c_no_register)
+      const databundling = datanya.map((item) => item.c_id_bundling)
+
+      const find = await this.prisma.t_produk_siswa.findMany({
+        where : {
+          c_id_bundling : {
+            in :databundling
+          },
+          c_no_register : {
+            in : datanoreg
+          }
+        }
+      })
+      
+
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath); // Menghapus file jika ada
+        console.log('File berhasil dihapus.');
+      } else {
+        console.log('File tidak ditemukan, tidak ada yang dihapus.');
+      }
+
+      return find;
+
+    } catch (error) {
+      console.log(error)
+      throw new Error('Error reading Excel file');
+    }
+  }
+
+
   async uploadT_produkSiswaBuildProdukAktif(file:any) {
     const workbook = new ExcelJS.Workbook();
     try {
@@ -1182,193 +1266,209 @@ export class AppService {
             40709
           ],
         },
-        {
-          c_id_produk_mix: 13077,
-          c_id_produk: [
-            40710
-          ],
-        },
-        {
-          c_id_produk_mix: 13125,
-          c_id_produk: [
-            40832
-          ],
-        },
-        {
-          c_id_produk_mix: 13126,
-          c_id_produk: [
-            40833
-          ],
-        },
-        {
-          c_id_produk_mix: 13127,
-          c_id_produk: [
-            40834
-          ],
-        },
-        {
-          c_id_produk_mix: 13128,
-          c_id_produk: [
-            40835
-          ],
-        },
-        {
-          c_id_produk_mix: 13129,
-          c_id_produk: [
-            40836
-          ],
-        },
-        {
-          c_id_produk_mix: 13130,
-          c_id_produk: [
-            40837
-          ],
-        },
-        {
-          c_id_produk_mix: 13131,
-          c_id_produk: [
-            40838
-          ],
-        },
-        {
-          c_id_produk_mix: 13141,
-          c_id_produk: [
-            40848
-          ],
-        },
-        {
-          c_id_produk_mix: 13142,
-          c_id_produk: [
-            40849
-          ],
-        },
-        {
-          c_id_produk_mix: 13143,
-          c_id_produk: [
-            40850
-          ],
-        },
-        {
-          c_id_produk_mix: 13152,
-          c_id_produk: [
-            40859
-          ],
-        },
-        {
-          c_id_produk_mix: 13153,
-          c_id_produk: [
-            40860
-          ],
-        },
-        {
-          c_id_produk_mix: 13154,
-          c_id_produk: [
-            40861
-          ],
-        },
-        {
-          c_id_produk_mix: 13155,
-          c_id_produk: [
-            40862
-          ],
-        },
-        {
-          c_id_produk_mix: 13160,
-          c_id_produk: [
-            40867
-          ],
-        },
-        {
-          c_id_produk_mix: 13161,
-          c_id_produk: [
-            40868
-          ],
-        },
-        {
-          c_id_produk_mix: 13162,
-          c_id_produk: [
-            40869
-          ],
-        },
-        {
-          c_id_produk_mix: 13196,
-          c_id_produk: [
-            40897
-          ],
-        },
-        {
-          c_id_produk_mix: 13197,
-          c_id_produk: [
-            40898
-          ],
-        },
-        {
-          c_id_produk_mix: 13198,
-          c_id_produk: [
-            40899
-          ],
-        },
-        {
-          c_id_produk_mix: 13216,
-          c_id_produk: [
-            40917
-          ],
-        },
-        {
-          c_id_produk_mix: 13217,
-          c_id_produk: [
-            40918
-          ],
-        },
-        {
-          c_id_produk_mix: 13218,
-          c_id_produk: [
-            40919
-          ],
-        },
-        {
-          c_id_produk_mix: 14263,
-          c_id_produk: [
-            41963
-          ],
-        },
-        {
-          c_id_produk_mix: 14264,
-          c_id_produk: [
-            41964
-          ],
-        },
-        {
-          c_id_produk_mix: 14265,
-          c_id_produk: [
-            41965
-          ],
-        },
-        {
-          c_id_produk_mix: 14266,
-          c_id_produk: [
-            41966
-          ],
-        },
-        {
-          c_id_produk_mix: 15282,
-          c_id_produk: [
-            42471
-          ],
-        },
-        {
-          c_id_produk_mix: 15283,
-          c_id_produk: [
-            42472
-          ],
-        },
-        {
-          c_id_produk_mix: 15284,
-          c_id_produk: [
-            42473
-          ],
-        },
-      ];
+      ]
+
+
+      // const produk_mix = [
+      //   {
+      //     c_id_produk_mix: 13073,
+      //     c_id_produk: [
+      //       40708
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13074,
+      //     c_id_produk: [
+      //       40709
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13077,
+      //     c_id_produk: [
+      //       40710
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13125,
+      //     c_id_produk: [
+      //       40832
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13126,
+      //     c_id_produk: [
+      //       40833
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13127,
+      //     c_id_produk: [
+      //       40834
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13128,
+      //     c_id_produk: [
+      //       40835
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13129,
+      //     c_id_produk: [
+      //       40836
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13130,
+      //     c_id_produk: [
+      //       40837
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13131,
+      //     c_id_produk: [
+      //       40838
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13141,
+      //     c_id_produk: [
+      //       40848
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13142,
+      //     c_id_produk: [
+      //       40849
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13143,
+      //     c_id_produk: [
+      //       40850
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13152,
+      //     c_id_produk: [
+      //       40859
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13153,
+      //     c_id_produk: [
+      //       40860
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13154,
+      //     c_id_produk: [
+      //       40861
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13155,
+      //     c_id_produk: [
+      //       40862
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13160,
+      //     c_id_produk: [
+      //       40867
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13161,
+      //     c_id_produk: [
+      //       40868
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13162,
+      //     c_id_produk: [
+      //       40869
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13196,
+      //     c_id_produk: [
+      //       40897
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13197,
+      //     c_id_produk: [
+      //       40898
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13198,
+      //     c_id_produk: [
+      //       40899
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13216,
+      //     c_id_produk: [
+      //       40917
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13217,
+      //     c_id_produk: [
+      //       40918
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 13218,
+      //     c_id_produk: [
+      //       40919
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 14263,
+      //     c_id_produk: [
+      //       41963
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 14264,
+      //     c_id_produk: [
+      //       41964
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 14265,
+      //     c_id_produk: [
+      //       41965
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 14266,
+      //     c_id_produk: [
+      //       41966
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 15282,
+      //     c_id_produk: [
+      //       42471
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 15283,
+      //     c_id_produk: [
+      //       42472
+      //     ],
+      //   },
+      //   {
+      //     c_id_produk_mix: 15284,
+      //     c_id_produk: [
+      //       42473
+      //     ],
+      //   },
+      // ];
 
       const result = data.flatMap((pembelian) => {
         const produkMixData = produk_mix.find(

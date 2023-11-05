@@ -125,6 +125,12 @@ export class AppController {
     return this.appService.uploadT_produkSiswaBuildProdukAktif(file)
   }
 
+  @Post('excel/t_produk_siswa/delete')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcel_delete_produk_siswa(@UploadedFile() file){
+    return this.appService.uploadT_produkSiswa_delete(file)
+  }
+
   @Post('excel/t_produk_aktif/readtable')
   @UseInterceptors(FileInterceptorWithDest('./excel'))
   async readExcel_read_table_produk_aktif(@UploadedFile() file){
