@@ -486,15 +486,14 @@ export class AppService {
           };
         }),
       );
-      
+
       // return hashedData
       const insertData = await this.prisma.t_siswa.createMany({
         data: hashedData,
       });
       return insertData;
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new Error('Error reading Excel file');
     }
   }
@@ -558,7 +557,11 @@ export class AppService {
   async bacaExcel_insert_t_produk_siswa() {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..', 'data t_produk_siswa_Dummy.xlsx');
+      const filePath = path.join(
+        __dirname,
+        '..',
+        'data t_produk_siswa_Dummy.xlsx',
+      );
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -688,45 +691,31 @@ export class AppService {
       const produk_mix = [
         {
           c_id_produk_mix: 13163,
-          c_id_produk: [
-            40870
-          ],
+          c_id_produk: [40870],
         },
         {
           c_id_produk_mix: 13164,
-          c_id_produk: [
-            40871
-          ],
+          c_id_produk: [40871],
         },
         {
           c_id_produk_mix: 13165,
-          c_id_produk: [
-            40872
-          ],
+          c_id_produk: [40872],
         },
         {
           c_id_produk_mix: 13166,
-          c_id_produk: [
-            40873
-          ],
+          c_id_produk: [40873],
         },
         {
           c_id_produk_mix: 13182,
-          c_id_produk: [
-           40866
-          ],
+          c_id_produk: [40866],
         },
         {
           c_id_produk_mix: 13183,
-          c_id_produk: [
-           40867
-          ],
+          c_id_produk: [40867],
         },
         {
           c_id_produk_mix: 13184,
-          c_id_produk: [
-           40868
-          ],
+          c_id_produk: [40868],
         },
       ];
 
@@ -810,35 +799,34 @@ export class AppService {
       });
 
       const datanya = data.map((item, index) => {
-        const c_idnya = 6002670
+        const c_idnya = 6002670;
         return {
           c_no_register: +item.c_no_register,
-          c_id_produk : +item.c_id_produk,
-          c_status : item.c_status,
-          c_tanggal_awal : new Date(item.c_tanggal_awal),
-          c_tanggal_akhir : new Date(item.c_tanggal_akhir),
-          c_id : c_idnya + (index+1)
+          c_id_produk: +item.c_id_produk,
+          c_status: item.c_status,
+          c_tanggal_awal: new Date(item.c_tanggal_awal),
+          c_tanggal_akhir: new Date(item.c_tanggal_akhir),
+          c_id: c_idnya + (index + 1),
         };
       });
 
       // return datanya
       const insertData = await this.prisma.t_produk_aktif.createMany({
         data: datanya,
-        skipDuplicates: true
+        skipDuplicates: true,
       });
 
-      return insertData
-    }
-    catch (error){
-      console.log(error)
+      return insertData;
+    } catch (error) {
+      console.log(error);
       throw new Error('Error reading Excel file');
     }
   }
 
-  async uploadbacaExcel(file:any) {
+  async uploadbacaExcel(file: any) {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..','excel', file.filename);
+      const filePath = path.join(__dirname, '..', 'excel', file.filename);
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -876,10 +864,10 @@ export class AppService {
     }
   }
 
-  async uploadbcryptExcelCariT_Siswa(file:any) {
+  async uploadbcryptExcelCariT_Siswa(file: any) {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..','excel', file.filename);
+      const filePath = path.join(__dirname, '..', 'excel', file.filename);
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -909,13 +897,13 @@ export class AppService {
       const noreg = data.map((item) => item.c_no_register);
 
       const findSiswa = await this.prisma.t_siswa.findMany({
-        where : {
-          c_no_register : {
-            in : noreg
-          }
-        }
-      })
-
+        where: {
+          c_no_register: {
+            in: noreg,
+          },
+        },
+      });
+      console.log(findSiswa.length)
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath); // Menghapus file jika ada
         console.log('File berhasil dihapus.');
@@ -933,15 +921,15 @@ export class AppService {
 
       return siswaNoreg;
     } catch (error) {
-      console.log(error)
-      return error
+      console.log(error);
+      return error;
     }
   }
 
-  async uploadbcryptExcel(file:any) {
+  async uploadbcryptExcel(file: any) {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..','excel', file.filename);
+      const filePath = path.join(__dirname, '..', 'excel', file.filename);
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -983,9 +971,10 @@ export class AppService {
           };
         }),
       );
-      
+
       const insertData = await this.prisma.t_siswa.createMany({
         data: hashedData,
+        skipDuplicates: true,
       });
 
       if (fs.existsSync(filePath)) {
@@ -996,15 +985,15 @@ export class AppService {
       }
       return insertData;
     } catch (error) {
+      console.log(error);
       throw new Error('Error reading Excel file');
     }
   }
 
-
-  async uploadT_produkSiswaRead(file:any) {
+  async uploadT_produkSiswaRead(file: any) {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..','excel', file.filename);
+      const filePath = path.join(__dirname, '..', 'excel', file.filename);
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -1054,7 +1043,6 @@ export class AppService {
         };
       });
 
-
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath); // Menghapus file jika ada
         console.log('File berhasil dihapus.');
@@ -1063,15 +1051,15 @@ export class AppService {
       }
       return datanya;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new Error('Error reading Excel file');
     }
   }
 
-  async uploadT_produkSiswaInsert(file:any) {
+  async uploadT_produkSiswaInsert(file: any) {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..','excel', file.filename);
+      const filePath = path.join(__dirname, '..', 'excel', file.filename);
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -1124,7 +1112,6 @@ export class AppService {
       const insertData = await this.prisma.t_produk_siswa.createMany({
         data: datanya,
       });
-      
 
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath); // Menghapus file jika ada
@@ -1134,15 +1121,15 @@ export class AppService {
       }
       return insertData;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new Error('Error reading Excel file');
     }
   }
 
-  async uploadT_produkSiswa_delete(file:any) {
+  async uploadT_produkSiswaFind(file: any) {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..','excel', file.filename);
+      const filePath = path.join(__dirname, '..', 'excel', file.filename);
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -1192,20 +1179,24 @@ export class AppService {
         };
       });
 
-      const datanoreg = datanya.map((item) => item.c_no_register)
-      const databundling = datanya.map((item) => item.c_id_bundling)
-
+      const noregnya = datanya.map((item) => item.c_no_register);
+      const id_bundling = datanya.map((item) => item.c_id_bundling);
       const find = await this.prisma.t_produk_siswa.findMany({
-        where : {
-          c_id_bundling : {
-            in :databundling
+        where: {
+          c_no_register: {
+            in: noregnya,
           },
-          c_no_register : {
-            in : datanoreg
-          }
-        }
-      })
-      
+          c_id_bundling: {
+            in: id_bundling,
+          },
+        },
+      });
+
+      const siswaNoreg = find.map((item) => {
+        return {
+          c_no_register: item.c_no_register.toString().padStart(12, '0'),
+        };
+      });
 
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath); // Menghapus file jika ada
@@ -1213,20 +1204,18 @@ export class AppService {
       } else {
         console.log('File tidak ditemukan, tidak ada yang dihapus.');
       }
-
-      return find;
-
+      return siswaNoreg;
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      console.log(error);
       throw new Error('Error reading Excel file');
     }
   }
 
-
-  async uploadT_produkSiswaBuildProdukAktif(file:any) {
+  async uploadT_produkSiswa_delete(file: any) {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..','excel', file.filename);
+      const filePath = path.join(__dirname, '..', 'excel', file.filename);
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -1253,21 +1242,106 @@ export class AppService {
         }
       });
 
+      const datanya = data.map((item) => {
+        return {
+          c_id_pembelian: +item.c_id_pembelian,
+          c_no_register: +item.c_no_register,
+          c_tanggal_daftar: item.c_tanggal_daftar,
+          c_id_kelas: +item.c_id_kelas,
+          c_tahun_ajaran: item.c_tahun_ajaran,
+          c_id_dikdasken: +item.c_id_dikdasken,
+          c_nama_lengkap: item.c_nama_lengkap,
+          c_id_gedung: +item.c_id_gedung,
+          c_id_komar: +item.c_id_komar,
+          c_id_kota: +item.c_id_kota,
+          c_id_sekolah: +item.c_id_sekolah,
+          c_id_sekolah_kelas: +item.c_id_sekolah_kelas,
+          c_tingkat_sekolah_kelas: item.c_tingkat_sekolah_kelas,
+          c_id_jenis_kelas: +item.c_id_jenis_kelas,
+          c_kapasitas_max: +item.c_kapasitas_max,
+          c_status_bayar: item.c_status_bayar,
+          c_id_bundling: +item.c_id_bundling,
+          c_kerjasama: item.c_kerjasama,
+        };
+      });
+
+      const datanoreg = datanya.map((item) => item.c_no_register);
+      const databundling = datanya.map((item) => item.c_id_bundling);
+
+      const find = await this.prisma.t_produk_siswa.deleteMany({
+        where: {
+          c_id_bundling: {
+            in: databundling,
+          },
+          c_no_register: {
+            in: datanoreg,
+          },
+        },
+      });
+
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath); // Menghapus file jika ada
+        console.log('File berhasil dihapus.');
+      } else {
+        console.log('File tidak ditemukan, tidak ada yang dihapus.');
+      }
+
+      return find;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Error reading Excel file');
+    }
+  }
+
+  async uploadT_produkSiswaBuildProdukAktif(file: any) {
+    const workbook = new ExcelJS.Workbook();
+    try {
+      const filePath = path.join(__dirname, '..', 'excel', file.filename);
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error('File not found');
+      }
+      await workbook.xlsx.readFile(filePath);
+      const worksheet = workbook.getWorksheet(1); // Assuming you want to read the first worksheet.
+
+      const data = [];
+
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) {
+          // Header row, you can process the headers here.
+        } else {
+          // Data rows
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            // Map column headers to keys
+            const columnHeader: any = worksheet
+              .getRow(1)
+              .getCell(colNumber).value;
+            rowData[columnHeader] = cell.value;
+          });
+          data.push(rowData);
+        }
+      });
+
+      //pgts UAT GO EXPERT
       const produk_mix = [
         {
-          c_id_produk_mix: 13073,
+          c_id_produk_mix: 13111,
           c_id_produk: [
-            40708
+            40807, 40793, 33708, 33619, 33296, 33295, 40802, 33423, 40797,
+            33630, 32796, 40805, 40804, 40799, 40798, 33520, 33233, 33695,
+            33164, 40803, 40801, 40800, 40796, 40792, 40806, 40795, 40794,
           ],
         },
         {
-          c_id_produk_mix: 13074,
+          c_id_produk_mix: 13112,
           c_id_produk: [
-            40709
+            40813, 40811, 33449, 40822, 40819, 40818, 40815, 33619, 40812,
+            33708, 33190, 40823, 40821, 40820, 33238, 33695, 33655, 33559,
+            33347, 40816, 40814, 40817, 40810, 32796, 40809, 40808, 33346,
           ],
         },
-      ]
-
+      ];
 
       // const produk_mix = [
       //   {
@@ -1501,15 +1575,14 @@ export class AppService {
           c_no_register: items.c_no_register,
           c_id_produk: items.c_id_produk,
           c_status: 'Aktif',
-          c_tanggal_awal: '2023-10-27',
-          c_tanggal_akhir: '2024-10-27',
+          c_tanggal_awal: '2023-10-26',
+          c_tanggal_akhir: '2023-11-30',
         });
       });
 
       const filePathBaru = `t_produk_aktif_${file.filename}.xlsx`;
       await workbookBaru.xlsx.writeFile(filePathBaru);
 
-      
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath); // Menghapus file jika ada
         console.log('File berhasil dihapus.');
@@ -1518,16 +1591,15 @@ export class AppService {
       }
       return filePathBaru;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new Error('Error reading Excel file');
     }
   }
 
-
-  async bacaExcel_table_t_produk_aktif(file:any) {
+  async bacaExcel_table_t_produk_aktif(file: any) {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..','excel', file.filename);
+      const filePath = path.join(__dirname, '..', 'excel', file.filename);
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -1554,33 +1626,32 @@ export class AppService {
         }
       });
 
-      const c_id = await this.prisma.$queryRaw`SELECT MAX(c_id) from t_produk_aktif`
+      const c_id = await this.prisma
+        .$queryRaw`SELECT MAX(c_id) from t_produk_aktif`;
 
       const datanya = data.map((item, index) => {
-        const c_idnya = c_id[0].max
+        const c_idnya = c_id[0].max;
         return {
           c_no_register: +item.c_no_register,
-          c_id_produk : +item.c_id_produk,
-          c_status : item.c_status,
-          c_tanggal_awal : new Date(item.c_tanggal_awal),
-          c_tanggal_akhir : new Date(item.c_tanggal_akhir),
-          c_id : c_idnya + (index+1)
+          c_id_produk: +item.c_id_produk,
+          c_status: item.c_status,
+          c_tanggal_awal: new Date(item.c_tanggal_awal),
+          c_tanggal_akhir: new Date(item.c_tanggal_akhir),
+          c_id: c_idnya + (index + 1),
         };
       });
 
-
-      return datanya
-    }
-    catch (error){
-      console.log(error)
+      return datanya;
+    } catch (error) {
+      console.log(error);
       throw new Error('Error reading Excel file');
     }
   }
 
-  async bacaExcel_insert_t_produk_aktifnya(file:any) {
+  async bacaExcel_insert_t_produk_aktifnya(file: any) {
     const workbook = new ExcelJS.Workbook();
     try {
-      const filePath = path.join(__dirname, '..','excel', file.filename);
+      const filePath = path.join(__dirname, '..', 'excel', file.filename);
 
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -1607,31 +1678,30 @@ export class AppService {
         }
       });
 
-      const c_id = await this.prisma.$queryRaw`SELECT MAX(c_id) from t_produk_aktif`
+      const c_id = await this.prisma
+        .$queryRaw`SELECT MAX(c_id) from t_produk_aktif`;
 
       const datanya = data.map((item, index) => {
-        const c_idnya = c_id[0].max
+        const c_idnya = c_id[0].max;
         return {
           c_no_register: +item.c_no_register,
-          c_id_produk : +item.c_id_produk,
-          c_status : item.c_status,
-          c_tanggal_awal : new Date(item.c_tanggal_awal),
-          c_tanggal_akhir : new Date(item.c_tanggal_akhir),
-          c_id : c_idnya + (index+1)
+          c_id_produk: +item.c_id_produk,
+          c_status: item.c_status,
+          c_tanggal_awal: new Date(item.c_tanggal_awal),
+          c_tanggal_akhir: new Date(item.c_tanggal_akhir),
+          c_id: c_idnya + (index + 1),
         };
       });
 
       const insertData = await this.prisma.t_produk_aktif.createMany({
         data: datanya,
-        skipDuplicates: true
+        skipDuplicates: true,
       });
 
-      return insertData
-    }
-    catch (error){
-      console.log(error)
+      return insertData;
+    } catch (error) {
+      console.log(error);
       throw new Error('Error reading Excel file');
     }
   }
-
 }
