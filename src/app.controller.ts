@@ -106,6 +106,12 @@ export class AppController {
     return this.appService.uploadbcryptExcelCariT_Siswa(file);
   }
 
+  @Post('excel/t_siswa/delete')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcel_delete_t_siswa(@UploadedFile() file) {
+    return this.appService.uploadExcel_Hapus_T_Siswa(file);
+  }
+
   @Post('excel/t_siswa/insert')
   @UseInterceptors(FileInterceptorWithDest('./excel'))
   async readExcel_insert_t_siswa(@UploadedFile() file) {
@@ -152,6 +158,23 @@ export class AppController {
   @UseInterceptors(FileInterceptorWithDest('./excel'))
   async readExcel_insert_t_produk_aktif(@UploadedFile() file) {
     return this.appService.bacaExcel_insert_t_produk_aktifnya(file);
+  }
+
+  @Post('excel/t_produk_aktif/find')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcel_find_produk_aktif(@UploadedFile() file) {
+    return this.appService.uploadT_produkAktif_find(file);
+  }
+
+  @Post('excel/t_produk_aktif/delete')
+  @UseInterceptors(FileInterceptorWithDest('./excel'))
+  async readExcel_delete_produk_aktif(@UploadedFile() file) {
+    return this.appService.uploadT_produkAktif_delete(file);
+  }
+
+  @Post('buat-bcrypt')
+  async buat_bcrypt(@Body() body:{password : string}){
+    return this.appService.bcrypt_saja(body.password)
   }
 }
 
