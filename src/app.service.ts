@@ -1256,7 +1256,7 @@ export class AppService {
         };
       });
 
-      const noregnya = datanya.map((item) => item.c_no_register);
+      const noregnya = datanya.map((item) => +item.c_no_register);
       const id_bundling = datanya.map((item) => item.c_id_bundling);
       const find = await this.prisma.t_produk_siswa.findMany({
         where: {
