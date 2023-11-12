@@ -173,8 +173,13 @@ export class AppController {
   }
 
   @Post('buat-bcrypt')
-  async buat_bcrypt(@Body() body:{password : string}){
-    return this.appService.bcrypt_saja(body.password)
+  async buat_bcrypt(@Body() body: { password: string }) {
+    return this.appService.bcrypt_saja(body.password);
+  }
+
+  @Post('bcrypt_user')
+  async bcryptOtomatis() {
+    return this.appService.bcrypt_user();
   }
 }
 

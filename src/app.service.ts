@@ -1263,9 +1263,9 @@ export class AppService {
           c_no_register: {
             in: noregnya,
           },
-          // c_id_bundling: {
-          //   in: id_bundling,
-          // },
+          c_id_bundling: {
+            in: id_bundling,
+          },
         },
       });
 
@@ -2691,18 +2691,40 @@ export class AppService {
     }
   }
 
-  async bcrypt_saja(password){
+  async bcrypt_saja(password) {
     try {
-      const saltRounds = 10
-      const hashedPassword = await bcrypt.hash(
-        password,
-        saltRounds,
-      );
-      console.log(hashedPassword)
-      return hashedPassword
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      console.log(hashedPassword);
+      return hashedPassword;
     } catch (error) {
       console.log(error);
       throw new Error('Error reading Excel file');
+    }
+  }
+
+  async bcrypt_user() {
+    try {
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      const saltRounds = 10;
+      const findUser = await this.prisma.t_siswa.findMany({
+        where: { c_no_register: 241234567003 },
+      });
+      findUser.map(async (item) => {
+        const noreg = item.c_no_register.toString().padStart(12, '0');
+        // console.log(noreg);
+        const hashedPassword = await bcrypt.hash(noreg, saltRounds);
+        const update = await this.prisma.t_siswa.update({
+          data: {
+            c_password: hashedPassword,
+          },
+          where: {
+            c_no_register: item.c_no_register,
+          },
+        });
+      });
+    } catch (error) {
+      throw new Error(error);
     }
   }
 }
