@@ -1013,8 +1013,9 @@ export class AppService {
       const hashedData = await Promise.all(
         data.map(async (item, index) => {
           console.log('count bcrypt', index);
-          const hashedPassword = await bcrypt.hash(item.c_password, saltRounds);
-          const noregstring = item.c_no_register.toString();
+          const noregstring = item.c_no_register.toString().padStart(12,'0');
+          const pw = typeof(item.c_password)
+          const hashedPassword = await bcrypt.hash(pw == 'number'? noregstring : item.c_password , saltRounds);
           return {
             c_no_register: +item.c_no_register,
             c_nama_lengkap: item.c_nama_lengkap,
@@ -1022,7 +1023,7 @@ export class AppService {
               ? `${item.c_noregister}@gmail.com`
               : item.c_email.toString(),
             c_nomor_hp: !item.c_nomor_hp
-              ? `0824123456${index}`
+              ? `08${noregstring.slice(-10)}`
               : item.c_nomor_hp,
             c_is_aktif: 'aktif',
             c_password: hashedPassword,
@@ -1060,6 +1061,7 @@ export class AppService {
       } else {
         console.log('File tidak ditemukan, tidak ada yang dihapus.');
       }
+      // return hashedData
       return insertData;
     } catch (error) {
       console.log(error);
@@ -1096,9 +1098,14 @@ export class AppService {
           data.push(rowData);
         }
       });
-      const datanya = data.map((item) => {
+
+      const c_id_pembelian = await this.prisma
+      .$queryRaw`SELECT MAX(c_id_pembelian) from t_produk_siswa`;
+
+      const datanya = data.map((item, index) => {
+        const c_id_pembeliannya = c_id_pembelian[0].max;
         return {
-          c_id_pembelian: +item.c_id_pembelian,
+          c_id_pembelian: c_id_pembeliannya + (index + 1),
           c_no_register: +item.c_no_register,
           c_tanggal_daftar: item.c_tanggal_daftar,
           c_id_kelas: +item.c_id_kelas,
@@ -1162,9 +1169,14 @@ export class AppService {
         }
       });
 
-      const datanya = data.map((item) => {
+      
+      const c_id_pembelian = await this.prisma
+      .$queryRaw`SELECT MAX(c_id_pembelian) from t_produk_siswa`;
+
+      const datanya = data.map((item, index ) => {
+        const c_id_pembeliannya = c_id_pembelian[0].max;
         return {
-          c_id_pembelian: +item.c_id_pembelian,
+          c_id_pembelian: c_id_pembeliannya + (index+1),
           c_no_register: +item.c_no_register,
           c_tanggal_daftar: new Date(item.c_tanggal_daftar),
           c_id_kelas: +item.c_id_kelas,
